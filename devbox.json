@@ -1,0 +1,33 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.0/.schema/devbox.schema.json",
+  "packages": [
+    "gcc@latest"
+  ],
+  "env": {
+    "CGO_ENABLED": "0"
+  },
+  "shell": {
+    "init_hook": [
+      "export UNAME=$(powershell.exe '$env:UserName')",
+      "export WIN_USER=${UNAME%%[[:cntrl:]]}",
+      "export INSTALL_DIRECTORY=\"/mnt/c/Users/$WIN_USER/documents/raylib/aoc2024\""
+    ],
+    "scripts": {
+      "build": [
+        "GOOS=windows go build",
+        "rm -rf $INSTALL_DIRECTORY",
+        "mkdir -p $INSTALL_DIRECTORY",
+        "cp external/raylib.dll $INSTALL_DIRECTORY/",
+        "mv aoc2024.exe $INSTALL_DIRECTORY/",
+        "echo Installed in \"$INSTALL_DIRECTORY\"",
+        "echo run $INSTALL_DIRECTORY/aoc2024.exe"
+      ],
+      "run": [
+        "$INSTALL_DIRECTORY/aoc2024.exe"
+      ],
+      "test": [
+        "echo \"Error: no test specified\" && exit 1"
+      ]
+    }
+  }
+}
