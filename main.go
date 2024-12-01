@@ -14,17 +14,6 @@ func main() {
 	)
 
 	a.RegisterDay(1, day1.NewApp(a))
-	a.RegisterDay(2, day1.NewApp(a))
-	a.RegisterDay(3, day1.NewApp(a))
-	a.RegisterDay(4, day1.NewApp(a))
-	a.RegisterDay(5, day1.NewApp(a))
-	a.RegisterDay(6, day1.NewApp(a))
-	a.RegisterDay(7, day1.NewApp(a))
-	a.RegisterDay(8, day1.NewApp(a))
-	a.RegisterDay(9, day1.NewApp(a))
-	a.RegisterDay(10, day1.NewApp(a))
-	a.RegisterDay(11, day1.NewApp(a))
-	a.RegisterDay(12, day1.NewApp(a))
 
 	a.Run()
 }

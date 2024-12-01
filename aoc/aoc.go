@@ -54,6 +54,7 @@ type App struct {
 	Day    Day
 
 	daysRegistry map[int]Day
+	Font         rl.Font
 }
 
 func NewApp(c AppConfig) *App {
@@ -110,8 +111,8 @@ func (a *App) drawMainPanel() {
 		if !a.isRegistered(day) {
 			continue
 		}
-		x := (day-1) % buttonsPerRow
-		y := (day-1) / buttonsPerRow
+		x := (day - 1) % buttonsPerRow
+		y := (day - 1) / buttonsPerRow
 		title := fmt.Sprintf("%s\n%s", days[day], a.daysRegistry[day].Title())
 		if gui.Button(rl.NewRectangle(
 			panelX+float32(padding+x*buttonWidth+x*gutter),
@@ -125,12 +126,14 @@ func (a *App) drawMainPanel() {
 
 }
 
-func (a App) Init() {
+func (a *App) Init() {
+	rl.SetConfigFlags(rl.TextureFilterLinear)
 	rl.InitWindow(int32(a.Config.WinWidth), int32(a.Config.WinHeight), "Advent of Code - 2024")
 	rl.SetTargetFPS(60)
+	// a.Font = rl.LoadFontEx("resources/fonts/mecha.png", 16, nil)
 }
 
-func (a App) Draw() {
+func (a *App) Draw() {
 	rl.BeginDrawing()
 	rl.ClearBackground(rl.GetColor(uint(gui.GetStyle(gui.DEFAULT, gui.BACKGROUND_COLOR))))
 
@@ -139,7 +142,7 @@ func (a App) Draw() {
 	rl.EndDrawing()
 }
 
-func (a App) Run() {
+func (a *App) Run() {
 	a.Init()
 
 	for !rl.WindowShouldClose() {
