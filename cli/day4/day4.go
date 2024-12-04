@@ -1,6 +1,8 @@
 package day4
 
 import (
+	"context"
+
 	"github.com/gverger/aoc2024/cli"
 	"github.com/gverger/aoc2024/day4"
 	"github.com/gverger/aoc2024/utils"
@@ -65,5 +67,5 @@ func (a *App) Run() {
 		}
 	}()
 
-	day4.Run(events)
+	day4.Run(context.Background(), events)
 }

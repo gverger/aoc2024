@@ -45,6 +45,10 @@ type App struct {
 	running bool
 }
 
+// Init implements aoc.Day.
+func (a *App) Init() {
+}
+
 type State struct {
 	NbOfSafeReportsP1 int
 	NbOfSafeReportsP2 int

@@ -2,6 +2,7 @@ package day4
 
 import (
 	"bufio"
+	"context"
 	"embed"
 
 	. "github.com/gverger/aoc2024/utils"
@@ -100,9 +101,20 @@ type SolutionFound struct {
 	Solution int
 }
 
-func Run(listener chan<- Event) {
+func Run(ctx context.Context, listener chan<- Event) {
+	notify := func(event any) {
+		log.Debug().Msg("Sending event")
+		select {
+		case listener <- event:
+		case <-ctx.Done():
+			log.Info().Msg("Terminated")
+			return
+		}
+		log.Debug().Msg("event sent")
+	}
+
 	input := ReadInput("sample.txt")
-	listener <- InputLoaded{Input: input}
+	notify(InputLoaded{Input: input})
 
 	// Part 1
 	neighbour := NewNeighbors8[string]()
@@ -112,13 +124,13 @@ func Run(listener chan<- Event) {
 		for y := 0; y < int(input.Grid.Height); y++ {
 			for x := 0; x < int(input.Grid.Width); x++ {
 				if isXmas(input.Grid, x, y, d) {
-					listener <- XMasFound{X: x, Y: y, Dir: d}
+					notify(XMasFound{X: x, Y: y, Dir: d})
 					nb++
 				}
 			}
 		}
 	}
-	listener <- SolutionFound{Part: 1, Solution: nb}
+	notify(SolutionFound{Part: 1, Solution: nb})
 	log.Info().Int("nb of xmas", nb).Msg("Part 1")
 
 	// Part 2
@@ -127,12 +139,12 @@ func Run(listener chan<- Event) {
 	for y := 1; y < int(input.Grid.Height)-1; y++ {
 		for x := 1; x < int(input.Grid.Width)-1; x++ {
 			if isMaxInX(input.Grid, x, y) {
-				listener <- MasInXFound{X: x, Y: y}
+				notify(MasInXFound{X: x, Y: y})
 				part2Nb++
 			}
 		}
 	}
 
-	listener <- SolutionFound{Part: 2, Solution: part2Nb}
+	notify(SolutionFound{Part: 2, Solution: part2Nb})
 	log.Info().Int("nb of mas in x", part2Nb).Msg("Part 2")
 }

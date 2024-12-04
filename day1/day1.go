@@ -39,6 +39,10 @@ type App struct {
 	running bool
 }
 
+// Init implements aoc.Day.
+func (a *App) Init() {
+}
+
 type VerticalList struct {
 	Items   []int
 	Focused int

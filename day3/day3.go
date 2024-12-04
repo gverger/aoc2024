@@ -46,6 +46,10 @@ type App struct {
 	currentAction Action
 }
 
+// Init implements aoc.Day.
+func (a *App) Init() {
+}
+
 type Mult struct {
 	A int
 	B int

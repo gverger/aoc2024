@@ -50,6 +50,7 @@ type AppConfig struct {
 }
 
 type Day interface {
+	Init()
 	Draw()
 	Title() string
 }
@@ -90,6 +91,7 @@ func (a *App) switchToDay(day int) {
 	}
 	log.Info().Str("Day", days[day]).Msg("Running day...")
 	a.Day = a.daysRegistry[day]
+	a.Day.Init()
 }
 
 func (a *App) drawMainPanel() {
