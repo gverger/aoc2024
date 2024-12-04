@@ -1,12 +1,17 @@
 package aoc
 
 import (
+	"embed"
 	"fmt"
 
 	gui "github.com/gen2brain/raylib-go/raygui"
 	rl "github.com/gen2brain/raylib-go/raylib"
+	. "github.com/gverger/aoc2024/utils"
 	"github.com/phuslu/log"
 )
+
+//go:embed Roboto.ttf
+var f embed.FS
 
 var days = []string{
 	"",
@@ -130,7 +135,12 @@ func (a *App) Init() {
 	rl.SetConfigFlags(rl.TextureFilterLinear)
 	rl.InitWindow(int32(a.Config.WinWidth), int32(a.Config.WinHeight), "Advent of Code - 2024")
 	rl.SetTargetFPS(60)
-	// a.Font = rl.LoadFontEx("resources/fonts/mecha.png", 16, nil)
+
+	fontData := Must(f.ReadFile("Roboto.ttf"))
+	a.Font = rl.LoadFontFromMemory(".ttf", fontData, 96, nil)
+	rl.SetTextureFilter(a.Font.Texture, rl.FilterBilinear)
+	rl.GenTextureMipmaps(&a.Font.Texture)
+
 }
 
 func (a *App) Draw() {

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gverger/aoc2024/aoc"
 	"github.com/gverger/aoc2024/day1"
+	"github.com/gverger/aoc2024/day3"
 )
 
 func main() {
@@ -14,6 +15,7 @@ func main() {
 	)
 
 	a.RegisterDay(1, day1.NewApp(a))
+	a.RegisterDay(3, day3.NewApp(a))
 
 	a.Run()
 }

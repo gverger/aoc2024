@@ -3,6 +3,7 @@ module github.com/gverger/aoc2024
 go 1.23.1
 
 require (
+	github.com/gen2brain/raylib-go/easings v0.0.0-20241203091912-3b89a24e68d1
 	github.com/gen2brain/raylib-go/raygui v0.0.0-20241117153000-01864c04b849
 	github.com/gen2brain/raylib-go/raylib v0.0.0-20241117153000-01864c04b849
 	github.com/phuslu/log v1.0.113
