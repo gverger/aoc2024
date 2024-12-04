@@ -24,6 +24,9 @@
       "run": [
         "$INSTALL_DIRECTORY/aoc2024.exe"
       ],
+      "cli": [
+        "$INSTALL_DIRECTORY/aoc2024.exe --cli $DAY"
+      ],
       "test": [
         "echo \"Error: no test specified\" && exit 1"
       ]

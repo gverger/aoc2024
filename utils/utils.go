@@ -28,3 +28,11 @@ func Abs[T int](value T) T {
 	}
 	return value
 }
+
+func Assert(condition bool) {
+	if condition {
+		return
+	}
+
+	log.Fatal().Msg("Assertion failed")
+}
