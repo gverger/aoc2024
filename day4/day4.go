@@ -43,7 +43,7 @@ func ReadInput(filename string) Input {
 	}
 
 	return Input{
-		Grid: g,
+		Grid: *g,
 	}
 }
 
@@ -101,33 +101,41 @@ type SolutionFound struct {
 	Solution int
 }
 
-func Run(ctx context.Context, listener chan<- Event) {
+func checkDone(ctx context.Context) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		return nil
+	}
+}
+
+func Run(ctx context.Context, listener chan<- Event) error {
 	notify := func(event any) {
-		log.Debug().Msg("Sending event")
 		select {
 		case listener <- event:
 		case <-ctx.Done():
-			log.Info().Msg("Terminated")
-			return
 		}
-		log.Debug().Msg("event sent")
 	}
 
-	input := ReadInput("sample.txt")
+	input := ReadInput("input.txt")
 	notify(InputLoaded{Input: input})
 
 	// Part 1
 	neighbour := NewNeighbors8[string]()
 	nb := 0
 
-	for _, d := range neighbour.Dirs {
-		for y := 0; y < int(input.Grid.Height); y++ {
-			for x := 0; x < int(input.Grid.Width); x++ {
+	for y := 0; y < int(input.Grid.Height); y++ {
+		for x := 0; x < int(input.Grid.Width); x++ {
+			for _, d := range neighbour.Dirs {
 				if isXmas(input.Grid, x, y, d) {
 					notify(XMasFound{X: x, Y: y, Dir: d})
 					nb++
 				}
 			}
+		}
+		if err := checkDone(ctx); err != nil {
+			return err
 		}
 	}
 	notify(SolutionFound{Part: 1, Solution: nb})
@@ -143,8 +151,13 @@ func Run(ctx context.Context, listener chan<- Event) {
 				part2Nb++
 			}
 		}
+		if err := checkDone(ctx); err != nil {
+			return err
+		}
 	}
 
 	notify(SolutionFound{Part: 2, Solution: part2Nb})
 	log.Info().Int("nb of mas in x", part2Nb).Msg("Part 2")
+
+	return nil
 }

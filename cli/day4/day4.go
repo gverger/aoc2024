@@ -47,9 +47,9 @@ func (a *App) Run() {
 				a.state.Input = e.Input
 				log.Info().Msg("Input loaded")
 			case day4.XMasFound:
-				log.Info().Interface("event", e).Msg("New XMas")
+				// log.Info().Interface("event", e).Msg("New XMas")
 			case day4.MasInXFound:
-				log.Info().Interface("event", e).Msg("New Mas in X")
+				// log.Info().Interface("event", e).Msg("New Mas in X")
 			case day4.SolutionFound:
 				log.Info().Int("part", e.Part).Interface("solution", e.Solution).Msg("Solution found")
 				switch e.Part {

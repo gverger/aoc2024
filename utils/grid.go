@@ -16,12 +16,12 @@ type Grid[T any] struct {
 	MaxY int
 }
 
-func NewGrid[T any](width, height uint) Grid[T] {
+func NewGrid[T any](width, height uint) *Grid[T] {
 	return NewGridEx[T](width, height, 0, 0)
 }
 
-func NewGridEx[T any](width, height uint, minX, minY int) Grid[T] {
-	return Grid[T]{
+func NewGridEx[T any](width, height uint, minX, minY int) *Grid[T] {
+	return &Grid[T]{
 		Width:  width,
 		Height: height,
 		cells:  make([]T, width*height),

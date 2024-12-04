@@ -48,19 +48,19 @@ func TestNeighbors(t *testing.T) {
 		},
 	}
 
-	is.Equal(n.NeighborCells(g, 2, 9), []utils.Cell[bool]{
+	is.Equal(n.NeighborCells(*g, 2, 9), []utils.Cell[bool]{
 		{X: 2, Y: 7, Value: true},
 		{X: 4, Y: 9, Value: false},
 		{X: 0, Y: 9, Value: false},
 	})
 
-	is.Equal(utils.NewNeighbors4[bool]().NeighborCells(g, 2, 9), []utils.Cell[bool]{
+	is.Equal(utils.NewNeighbors4[bool]().NeighborCells(*g, 2, 9), []utils.Cell[bool]{
 		{X: 2, Y: 8, Value: true},
 		{X: 3, Y: 9, Value: false},
 		{X: 1, Y: 9, Value: false},
 	})
 
-	is.Equal(utils.NewNeighbors8[bool]().NeighborCells(g, 2, 9), []utils.Cell[bool]{
+	is.Equal(utils.NewNeighbors8[bool]().NeighborCells(*g, 2, 9), []utils.Cell[bool]{
 		{X: 2, Y: 8, Value: true},
 		{X: 3, Y: 8, Value: false},
 		{X: 3, Y: 9, Value: false},
