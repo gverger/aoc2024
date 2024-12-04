@@ -132,8 +132,10 @@ func (a *App) drawMainPanel() {
 }
 
 func (a *App) Init() {
-	rl.SetConfigFlags(rl.TextureFilterLinear)
+	rl.SetConfigFlags(rl.FlagWindowResizable)
 	rl.InitWindow(int32(a.Config.WinWidth), int32(a.Config.WinHeight), "Advent of Code - 2024")
+	rl.SetConfigFlags(rl.FlagBorderlessWindowedMode)
+
 	rl.SetTargetFPS(60)
 
 	fontData := Must(f.ReadFile("Roboto.ttf"))
