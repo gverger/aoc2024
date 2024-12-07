@@ -33,6 +33,12 @@ func NewGridEx[T any](width, height uint, minX, minY int) *Grid[T] {
 	}
 }
 
+func (g *Grid[T]) SetAll(value T) {
+	for i := range g.cells {
+		g.cells[i] = value
+	}
+}
+
 func (g Grid[T]) IsCoordValid(x, y int) bool {
 	return x >= g.MinX && x <= g.MaxX && y >= g.MinY && y <= g.MaxY
 }
@@ -43,6 +49,16 @@ func (g Grid[T]) At(x, y int) T {
 
 func (g *Grid[T]) Set(x, y int, value T) {
 	g.cells[g.coordsToIdx(x, y)] = value
+}
+
+func (g Grid[T]) Count(filter func(T) bool) int {
+	count := 0
+	for _, c := range g.cells {
+		if filter(c) {
+			count++
+		}
+	}
+	return count
 }
 
 func (g Grid[T]) String() string {
@@ -120,6 +136,22 @@ func (n GridNeighbor[T]) NeighborCells(g Grid[T], x, y int) []Cell[T] {
 	}
 
 	return neighbors
+}
+
+func (g Grid[T]) Clone() *Grid[T] {
+
+	cells := make([]T, len(g.cells))
+	copy(cells, g.cells)
+
+	return &Grid[T]{
+		Width:  g.Width,
+		Height: g.Height,
+		cells:  cells,
+		MinX:   g.MinX,
+		MinY:   g.MinY,
+		MaxX:   g.MaxX,
+		MaxY:   g.MaxY,
+	}
 }
 
 func NewNeighbors4[T any]() GridNeighbor[T] {

@@ -36,3 +36,28 @@ func Assert(condition bool) {
 
 	log.Fatal().Msg("Assertion failed")
 }
+
+func AssertNoErr(err error) {
+	if err == nil {
+		return
+	}
+	log.Fatal().Err(err)
+}
+
+func MapTo[T any, U any](list []T, mapper func(T) U) []U {
+	mappedValues := make([]U, len(list))
+	for i, v := range list {
+		mappedValues[i] = mapper(v)
+	}
+	return mappedValues
+}
+
+func Filter[T any](list []T, keepIt func(T) bool) []T {
+	filteredValues := make([]T, 0, len(list))
+	for _, v := range list {
+		if keepIt(v) {
+			filteredValues = append(filteredValues, v)
+		}
+	}
+	return filteredValues
+}

@@ -9,6 +9,8 @@ import (
 	"github.com/gverger/aoc2024/cli"
 	day4cli "github.com/gverger/aoc2024/cli/day4"
 	day5cli "github.com/gverger/aoc2024/cli/day5"
+	day6cli "github.com/gverger/aoc2024/cli/day6"
+	day7cli "github.com/gverger/aoc2024/cli/day7"
 	"github.com/gverger/aoc2024/day1"
 	"github.com/gverger/aoc2024/day2"
 	"github.com/gverger/aoc2024/day3"
@@ -36,6 +38,8 @@ func console(day string) {
 	cli := cli.NewApp(cli.AppConfig{})
 	cli.RegisterDay(4, day4cli.NewApp(cli))
 	cli.RegisterDay(5, day5cli.NewApp(cli))
+	cli.RegisterDay(6, day6cli.NewApp(cli))
+	cli.RegisterDay(7, day7cli.NewApp(cli))
 
 	d := utils.Must(strconv.Atoi(day))
 	cli.Run(d)
