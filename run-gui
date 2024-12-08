@@ -1,0 +1,1 @@
+devbox run build && devbox run run
