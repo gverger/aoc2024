@@ -13,7 +13,7 @@ func NewGraph[ID comparable]() *Graph[ID] {
 }
 
 func (g *Graph[ID]) AddNode(id ID) {
-	Assert(!g.HasNode(id))
+	Assert(!g.HasNode(id), "node exists: %v", id)
 
 	g.addNode(id)
 }
@@ -31,7 +31,7 @@ func (g *Graph[ID]) AddEdge(a, b ID) {
 	if !g.HasNode(b) {
 		g.addNode(b)
 	}
-	Assert(!g.HasEdge(a, b))
+	Assert(!g.HasEdge(a, b), "edge exists: %v->%v", a, b)
 	g.addEdge(a, b)
 }
 

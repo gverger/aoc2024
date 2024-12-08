@@ -1,6 +1,10 @@
 package utils
 
-import "github.com/phuslu/log"
+import (
+	"fmt"
+
+	"github.com/phuslu/log"
+)
 
 func Minimum(list []int) int {
 	if len(list) == 0 {
@@ -29,15 +33,15 @@ func Abs[T int](value T) T {
 	return value
 }
 
-func Assert(condition bool) {
+func Assert(condition bool, msg string, args ...any) {
 	if condition {
 		return
 	}
 
-	log.Fatal().Msg("Assertion failed")
+	log.Fatal().Msg(fmt.Sprint("Assertion failed: ", fmt.Sprintf(msg, args...)))
 }
 
-func AssertNoErr(err error) {
+func AssertNoErr(err error, msg string) {
 	if err == nil {
 		return
 	}

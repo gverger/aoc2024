@@ -64,7 +64,7 @@ func ReadInput(filename string) Input {
 	for scanner.Scan() {
 		lines = append(lines, scanner.Text())
 	}
-	AssertNoErr(scanner.Err())
+	AssertNoErr(scanner.Err(), "reading input file")
 
 	g := NewGrid[CellType](uint(len(lines[0])), uint(len(lines)))
 	guard := Guard{}

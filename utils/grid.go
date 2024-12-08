@@ -62,9 +62,13 @@ func (g Grid[T]) Count(filter func(T) bool) int {
 }
 
 func (g Grid[T]) String() string {
+	return g.Stringf(func(t T) string { return fmt.Sprint(t) })
+}
+
+func (g Grid[T]) Stringf(format func(T) string) string {
 	maxCellWidth := 0
 	for _, v := range g.cells {
-		maxCellWidth = max(maxCellWidth, len(fmt.Sprint(v)))
+		maxCellWidth = max(maxCellWidth, len(format(v)))
 	}
 
 	var sb strings.Builder
@@ -77,7 +81,7 @@ func (g Grid[T]) String() string {
 			sb.WriteString("\n")
 		}
 
-		text := fmt.Sprint(v)
+		text := format(v)
 		sb.WriteString(text)
 		sb.WriteString(strings.Repeat(" ", maxCellWidth-len(text)))
 	}
@@ -86,7 +90,7 @@ func (g Grid[T]) String() string {
 }
 
 func (g Grid[T]) coordsToIdx(x, y int) int {
-	Assert(g.IsCoordValid(x, y))
+	Assert(g.IsCoordValid(x, y), "coord not valid: %d,%d", x, y)
 
 	return (y-g.MinY)*int(g.Width) + (x - g.MinX)
 }

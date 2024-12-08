@@ -42,7 +42,7 @@ func ReadInput(filename string) Input {
 		})
 
 	}
-	AssertNoErr(scanner.Err())
+	AssertNoErr(scanner.Err(), "reading input file")
 
 	return input
 }
