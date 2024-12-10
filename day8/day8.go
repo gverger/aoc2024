@@ -146,7 +146,7 @@ func Run(ctx context.Context, callback func(ctx context.Context, obj any)) {
 		}
 	}))
 
-	callback(ctx, SolutionFound{Part: 1, Solution: antinodes1.Count(func(b bool) bool { return b })})
+	callback(ctx, SolutionFound{Part: 1, Solution: antinodes1.Count(func(b Cell[bool]) bool { return b.Value })})
 
 	antinodes2 := antinodes2(input.Grid)
 	fmt.Println(antinodes2.Stringf(func(b bool) string {
@@ -157,5 +157,5 @@ func Run(ctx context.Context, callback func(ctx context.Context, obj any)) {
 		}
 	}))
 
-	callback(ctx, SolutionFound{Part: 2, Solution: antinodes2.Count(func(b bool) bool { return b })})
+	callback(ctx, SolutionFound{Part: 2, Solution: antinodes2.Count(func(b Cell[bool]) bool { return b.Value })})
 }

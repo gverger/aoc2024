@@ -189,7 +189,7 @@ func Run(ctx context.Context, callback func(ctx context.Context, obj any)) {
 	if result1 == GuardInCycle {
 		log.Fatal().Msg("In cycle??")
 	}
-	callback(ctx, SolutionFound{Part: 1, Solution: visited.Count(func(b bool) bool { return b })})
+	callback(ctx, SolutionFound{Part: 1, Solution: visited.Count(func(b Cell[bool]) bool { return b.Value })})
 
 	cycles := 0
 	for y := 0; y < int(input.Grid.Height); y++ {

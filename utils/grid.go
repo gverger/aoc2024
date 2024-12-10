@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"iter"
 	"strings"
 )
 
@@ -39,6 +40,12 @@ func (g *Grid[T]) SetAll(value T) {
 	}
 }
 
+func (g *Grid[T]) SetAllFunc(init func() T) {
+	for i := range g.cells {
+		g.cells[i] = init()
+	}
+}
+
 func (g Grid[T]) IsCoordValid(x, y int) bool {
 	return x >= g.MinX && x <= g.MaxX && y >= g.MinY && y <= g.MaxY
 }
@@ -51,9 +58,9 @@ func (g *Grid[T]) Set(x, y int, value T) {
 	g.cells[g.coordsToIdx(x, y)] = value
 }
 
-func (g Grid[T]) Count(filter func(T) bool) int {
+func (g Grid[T]) Count(filter func(Cell[T]) bool) int {
 	count := 0
-	for _, c := range g.cells {
+	for c := range g.AllCells() {
 		if filter(c) {
 			count++
 		}
@@ -93,6 +100,18 @@ func (g Grid[T]) coordsToIdx(x, y int) int {
 	Assert(g.IsCoordValid(x, y), "coord not valid: %d,%d", x, y)
 
 	return (y-g.MinY)*int(g.Width) + (x - g.MinX)
+}
+
+func (g Grid[T]) AllCells() iter.Seq[Cell[T]] {
+	return func(yield func(Cell[T]) bool) {
+		for i, v := range g.cells {
+			x := g.MinX + i%int(g.Width)
+			y := g.MinY + i/int(g.Height)
+			if !yield(Cell[T]{X: x, Y: y, Value: v}) {
+				return
+			}
+		}
+	}
 }
 
 type Cell[T any] struct {
