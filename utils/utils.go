@@ -19,6 +19,12 @@ func Minimum(list []int) int {
 	return m
 }
 
+func MustSucceed(err error) {
+	if err != nil {
+		log.Fatal().Err(err)
+	}
+}
+
 func Must[T any](value T, err error) T {
 	if err != nil {
 		log.Fatal().Err(err)

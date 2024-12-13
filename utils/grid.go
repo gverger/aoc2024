@@ -177,14 +177,17 @@ func (g Grid[T]) Clone() *Grid[T] {
 	}
 }
 
+var Dirs4 = []Direction{DirUp, DirRight, DirDown, DirLeft}
+var Dirs8 = []Direction{DirUp, DirUR, DirRight, DirDR, DirDown, DirDL, DirLeft, DirUL}
+
 func NewNeighbors4[T any]() GridNeighbor[T] {
 	return GridNeighbor[T]{
-		Dirs: []Direction{DirUp, DirRight, DirDown, DirLeft},
+		Dirs: Dirs4,
 	}
 }
 
 func NewNeighbors8[T any]() GridNeighbor[T] {
 	return GridNeighbor[T]{
-		Dirs: []Direction{DirUp, DirUR, DirRight, DirDR, DirDown, DirDL, DirLeft, DirUL},
+		Dirs: Dirs8,
 	}
 }
