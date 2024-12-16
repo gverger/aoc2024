@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"embed"
+	"sort"
 
 	. "github.com/gverger/aoc2024/utils"
 	"github.com/phuslu/log"
@@ -17,10 +18,14 @@ var f embed.FS
 type CellType uint8
 
 const (
-	Empty  CellType = 0
-	Wall   CellType = 1
-	Box    CellType = 2
-	Player CellType = 3
+	Empty CellType = 1 << iota
+	Wall
+	Box
+	Player
+	Left
+	Right
+
+	Highlighted
 )
 
 type Pos struct {
@@ -34,6 +39,32 @@ type Input struct {
 	Moves  []Direction
 }
 
+func createPart2(input Input) Input {
+	g := NewGrid[CellType](2*input.Grid.Width, input.Grid.Height)
+	for j := 0; j < int(input.Grid.Height); j++ {
+		for i := 0; i < int(input.Grid.Width); i++ {
+			cell := input.Grid.At(i, j)
+			switch cell {
+			case Box:
+				g.Set(2*i, j, Box|Left)
+				g.Set(2*i+1, j, Box|Right)
+			case Player:
+				g.Set(2*i, j, Player)
+				g.Set(2*i+1, j, Empty)
+			default:
+				g.Set(2*i, j, cell)
+				g.Set(2*i+1, j, cell)
+			}
+		}
+	}
+	return Input{
+		Grid:   g,
+		Player: Pos{X: 2 * input.Player.X, Y: input.Player.Y},
+		Moves:  input.Moves,
+	}
+
+}
+
 func ReadInput(filename string) Input {
 	file := Must(f.Open(filename))
 	defer file.Close()
@@ -43,7 +74,6 @@ func ReadInput(filename string) Input {
 	lines := make([]string, 0)
 
 	for scanner.Scan() {
-		log.Debug().Str("line", scanner.Text()).Msg("reading")
 		line := scanner.Text()
 		if len(line) == 0 {
 			break
@@ -76,7 +106,6 @@ func ReadInput(filename string) Input {
 
 	moves := make([]Direction, 0)
 	for scanner.Scan() {
-		log.Debug().Str("line", scanner.Text()).Msg("reading")
 		for _, c := range scanner.Text() {
 			switch c {
 			case 'v':
@@ -137,25 +166,125 @@ func move(input *Input, dir Direction) {
 	}
 }
 
+func pushedBoxes(g Grid[CellType], x, y int, dir Direction) (Set[Pos], bool) {
+	nx, ny := dir.Apply(x, y)
+
+	positions := NewSet[Pos]()
+
+	cell := g.At(nx, ny)
+
+	if cell&Wall != 0 {
+		return nil, false
+	}
+
+	if cell&Empty != 0 {
+		return NewSet[Pos](), true
+	}
+
+	if cell&Right != 0 {
+		nx--
+	}
+
+	positions.Add(Pos{nx, ny})
+	positions.Add(Pos{nx + 1, ny})
+
+	if dir.Dy != 0 {
+		if pos, ok := pushedBoxes(g, nx, ny, dir); ok {
+			positions.Union(pos)
+		} else {
+			return nil, false
+		}
+		if pos, ok := pushedBoxes(g, nx+1, ny, dir); ok {
+			positions.Union(pos)
+		} else {
+			return nil, false
+		}
+	} else if dir.Dx == 1 {
+		if pos, ok := pushedBoxes(g, nx+1, ny, dir); ok {
+			positions.Union(pos)
+		} else {
+			return nil, false
+		}
+	} else {
+		if pos, ok := pushedBoxes(g, nx, ny, dir); ok {
+			positions.Union(pos)
+		} else {
+			return nil, false
+		}
+	}
+
+	return positions, true
+}
+
+func move2(input *Input, dir Direction) {
+	g := input.Grid
+	px, py := dir.Apply(input.Player.X, input.Player.Y)
+
+	Assert(g.IsCoordValid(px, py), "out of bounds")
+
+	pushed, ok := pushedBoxes(*g, input.Player.X, input.Player.Y, dir)
+	if !ok {
+		return
+	}
+
+	pos := make([]Pos, 0, len(pushed))
+	for p := range pushed {
+		pos = append(pos, p)
+	}
+
+	sort.Slice(pos, func(i, j int) bool {
+		di := pos[i].X*dir.Dx + pos[i].Y*dir.Dy
+		dj := pos[j].X*dir.Dx + pos[j].Y*dir.Dy
+		return di > dj
+	})
+
+	for _, p := range pos {
+		x, y := dir.Apply(p.X, p.Y)
+		g.Set(x, y, g.At(p.X, p.Y)|Highlighted)
+		g.Set(p.X, p.Y, Empty)
+	}
+	g.Set(input.Player.X, input.Player.Y, Empty)
+	input.Player = Pos{px, py}
+	g.Set(px, py, Player)
+}
+
 func Run(ctx context.Context, callback func(ctx context.Context, obj any)) {
 	log.DefaultLogger.SetLevel(log.InfoLevel)
 
 	input := ReadInput("input.txt")
-	callback(ctx, InputLoaded{Input: input})
-	callback(ctx, Moved{Grid: *input.Grid})
+	// callback(ctx, InputLoaded{Input: input})
+	//
+	// for _, m := range input.Moves {
+	// 	move(&input, m)
+	//
+	// 	callback(ctx, Moved{Grid: *input.Grid})
+	// }
+	//
+	// score := 0
+	// for cell := range input.Grid.AllCells() {
+	// 	if cell.Value == Box {
+	// 		score += cell.Y*100 + cell.X
+	// 	}
+	// }
+	//
+	// callback(ctx, SolutionFound{Part: 1, Solution: score})
 
-	for _, m := range input.Moves {
-		move(&input, m)
+	input2 := createPart2(input)
+	callback(ctx, InputLoaded{Input: input2})
+	for _, m := range input2.Moves {
+		move2(&input2, m)
+		// callback(ctx, Moved{Grid: *input2.Grid})
 
-		callback(ctx, Moved{Grid: *input.Grid})
+		for c := range input2.Grid.AllCells() {
+			nohighlight := c.Value & ^Highlighted
+			input2.Grid.Set(c.X, c.Y, CellType(nohighlight))
+		}
 	}
-
 	score := 0
-	for cell := range input.Grid.AllCells() {
-		if cell.Value == Box {
+	for cell := range input2.Grid.AllCells() {
+		if cell.Value == Box|Left {
 			score += cell.Y*100 + cell.X
 		}
 	}
-
-	callback(ctx, SolutionFound{Part: 1, Solution: score})
+	callback(ctx, SolutionFound{Part: 2, Solution: score})
 }

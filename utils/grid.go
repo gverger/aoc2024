@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"iter"
 	"strings"
+
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Grid[T any] struct {
@@ -85,7 +87,7 @@ func (g Grid[T]) String() string {
 func (g Grid[T]) Stringf(format func(T) string) string {
 	maxCellWidth := 0
 	for _, v := range g.cells {
-		maxCellWidth = max(maxCellWidth, len(format(v)))
+		maxCellWidth = max(maxCellWidth, lipgloss.Width(format(v)))
 	}
 
 	var sb strings.Builder
@@ -100,7 +102,7 @@ func (g Grid[T]) Stringf(format func(T) string) string {
 
 		text := format(v)
 		sb.WriteString(text)
-		sb.WriteString(strings.Repeat(" ", maxCellWidth-len(text)))
+		sb.WriteString(strings.Repeat(" ", maxCellWidth-lipgloss.Width(text)))
 	}
 
 	return sb.String()
@@ -116,7 +118,7 @@ func (g Grid[T]) AllCells() iter.Seq[Cell[T]] {
 	return func(yield func(Cell[T]) bool) {
 		for i, v := range g.cells {
 			x := g.MinX + i%int(g.Width)
-			y := g.MinY + i/int(g.Height)
+			y := g.MinY + i/int(g.Width)
 			if !yield(Cell[T]{X: x, Y: y, Value: v}) {
 				return
 			}
