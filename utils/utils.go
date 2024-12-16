@@ -71,3 +71,7 @@ func Filter[T any](list []T, keepIt func(T) bool) []T {
 	}
 	return filteredValues
 }
+
+func Mod(a, b int) int {
+    return (a % b + b) % b
+}
