@@ -108,6 +108,30 @@ func (g Grid[T]) Stringf(format func(T) string) string {
 	return sb.String()
 }
 
+func (g Grid[T]) StringDots(filter func(T) bool) string {
+	var sb strings.Builder
+
+	for y := 0; y < int(g.Height)+4; y += 4 {
+		for x := 0; x < int(g.Width)+2; x += 2 {
+			current := Braille{}
+			for dy := 0; dy < 4; dy++ {
+				if y+dy >= int(g.Height) {
+					break
+				}
+				for dx := 0; dx < 2; dx++ {
+					if x+dx >= int(g.Width) {
+						break
+					}
+					current[dx][dy] = filter(g.At(x+dx, y+dy))
+				}
+			}
+			sb.WriteRune(current.Rune())
+		}
+		sb.WriteRune('\n')
+	}
+	return sb.String()
+}
+
 func (g Grid[T]) coordsToIdx(x, y int) int {
 	Assert(g.IsCoordValid(x, y), "coord not valid: %d,%d", x, y)
 

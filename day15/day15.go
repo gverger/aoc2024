@@ -10,9 +10,7 @@ import (
 	"github.com/phuslu/log"
 )
 
-//go:embed input.txt
-//go:embed sample.txt
-//go:embed small.txt
+//go:embed *.txt
 var f embed.FS
 
 type CellType uint8

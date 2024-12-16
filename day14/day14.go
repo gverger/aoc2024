@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"embed"
-	"fmt"
 	"regexp"
 	"strconv"
 
@@ -12,8 +11,7 @@ import (
 	"github.com/phuslu/log"
 )
 
-//go:embed input.txt
-//go:embed sample.txt
+//go:embed *.txt
 var f embed.FS
 
 type Pos struct {
@@ -76,12 +74,21 @@ func ReadInput(filename string) Input {
 }
 
 type InputLoaded struct {
-	Input Input
+	Input  Input
+	Width  int
+	Height int
 }
 
 type SolutionFound struct {
 	Part     int
 	Solution int
+}
+
+type StateUpdated struct {
+	Turn      int
+	Positions []Pos
+	Width     int
+	Height    int
 }
 
 func PositionsAtTurn(input Input, turn int) []Pos {
@@ -108,21 +115,25 @@ func Run(ctx context.Context, callback func(ctx context.Context, obj any)) {
 	}
 
 	input := ReadInput(filename)
-	// input := ReadInput("sample.txt")
-	// width := 11
-	// height := 7
 
-	callback(ctx, InputLoaded{Input: input})
+	callback(ctx, InputLoaded{Input: input, Width: width, Height: height})
 
+	for i := 0; i < 10000; i++ {
+		positions := PositionsAtTurn(input, i)
+		callback(ctx, StateUpdated{
+			Turn:      i,
+			Positions: positions,
+			Width:     width,
+			Height:    height,
+		})
+	}
 
-	g := NewGrid[int](uint(width), uint(height))
 	positions := PositionsAtTurn(input, 100)
 
 	quadrants := [4]int{0, 0, 0, 0}
 	for _, p := range positions {
 		x := Mod(p.X, width)
 		y := Mod(p.Y, height)
-		g.Set(x, y, g.At(x, y)+1)
 
 		if x == width/2 || y == height/2 {
 			continue
@@ -139,14 +150,6 @@ func Run(ctx context.Context, callback func(ctx context.Context, obj any)) {
 
 		quadrants[quadrant]++
 	}
-
-	fmt.Println(g.Stringf(func(i int) string {
-		if i == 0 {
-			return "."
-		} else {
-			return strconv.Itoa(i)
-		}
-	}))
 
 	solution1 := 1
 	for _, v := range quadrants {
