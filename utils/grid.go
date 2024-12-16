@@ -68,6 +68,16 @@ func (g Grid[T]) Count(filter func(Cell[T]) bool) int {
 	return count
 }
 
+func MapGrid[T any, U any](g Grid[T], mapper func(t T) U) *Grid[U] {
+	dst := NewGridEx[U](g.Width, g.Height, g.MinX, g.MinY)
+
+	for i := 0; i < len(g.cells); i++ {
+		dst.cells[i] = mapper(g.cells[i])
+	}
+
+	return dst
+}
+
 func (g Grid[T]) String() string {
 	return g.Stringf(func(t T) string { return fmt.Sprint(t) })
 }
