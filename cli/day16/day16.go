@@ -60,7 +60,7 @@ func (m *model) callback(ctx context.Context, event any) {
 		m.changes <- Change{Event: e}
 	case day16.SolutionFound:
 		log.Info().Interface("event", e).Msg("solution")
-	m.changes <- Change{Event: e}
+		m.changes <- Change{Event: e}
 	}
 }
 
@@ -94,6 +94,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.sol2 = e.Solution
 			}
+			m.grid = e.Grid
 		}
 		return m, waitForChange(m.changes)
 	case Done:
@@ -117,6 +118,8 @@ func (m model) View() string {
 			return " "
 		case day16.Wall:
 			return "█"
+		case day16.Footprints:
+			return "X"
 		}
 		return "?"
 	})))
